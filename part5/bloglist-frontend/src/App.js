@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Blogs from "./components/Blogs";
-import blogService from "./services/blogs";
+import blogService from "./services/blogService";
 import LoginForm from "./components/Login";
-import login from "./services/login";
+import loginService from "./services/loginService";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -19,6 +19,7 @@ const App = () => {
     if (loggedUser) {
       const newUser = JSON.parse(loggedUser);
       setUser(newUser);
+      blogService.setToken(newUser.token);
     }
   }, []);
 
@@ -26,13 +27,15 @@ const App = () => {
     event.preventDefault();
 
     try {
-      const user = await login({ username, password });
+      const user = await loginService.login({ username, password });
       setUser(user);
+      window.localStorage.setItem("loggedUser", JSON.stringify(user));
       setUsername("");
       setPassword("");
-      window.localStorage.setItem("loggedUser", JSON.stringify(user));
+      blogService.setToken(user.token);
     } catch (exception) {
-      console.log("Something went wrong");
+      console.log("Something went wrong with logging in.");
+      console.log(exception);
     }
   };
 
@@ -40,7 +43,12 @@ const App = () => {
     <div>
       {user ? (
         <div>
-          <Blogs blogs={blogs} user={user} setUser={setUser} />
+          <Blogs
+            blogs={blogs}
+            user={user}
+            setUser={setUser}
+            setBlogs={setBlogs}
+          />
         </div>
       ) : (
         <LoginForm
