@@ -40,7 +40,7 @@ const App = () => {
     <div>
       {user ? (
         <div>
-          <Blogs blogs={blogs} user={user} />
+          <Blogs blogs={blogs} user={user} setUser={setUser} />
         </div>
       ) : (
         <LoginForm
