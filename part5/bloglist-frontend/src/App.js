@@ -3,12 +3,15 @@ import Blogs from "./components/Blogs";
 import blogService from "./services/blogService";
 import LoginForm from "./components/Login";
 import loginService from "./services/loginService";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -34,8 +37,13 @@ const App = () => {
       setPassword("");
       blogService.setToken(user.token);
     } catch (exception) {
-      console.log("Something went wrong with logging in.");
       console.log(exception);
+      setMessage("Wrong username or password");
+      setError(true);
+      setTimeout(() => {
+        setMessage(null);
+        setError(false);
+      }, 5000);
     }
   };
 
@@ -51,13 +59,16 @@ const App = () => {
           />
         </div>
       ) : (
-        <LoginForm
-          username={username}
-          password={password}
-          setUsername={(event) => setUsername(event.target.value)}
-          setPassword={(event) => setPassword(event.target.value)}
-          handleLogin={handleLogin}
-        />
+        <div>
+          <Notification message={message} error={error} />
+          <LoginForm
+            username={username}
+            password={password}
+            setUsername={(event) => setUsername(event.target.value)}
+            setPassword={(event) => setPassword(event.target.value)}
+            handleLogin={handleLogin}
+          />
+        </div>
       )}
     </div>
   );

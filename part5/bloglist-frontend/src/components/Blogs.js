@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import blogService from "../services/blogService";
+import Notification from "./Notification";
 
 const handleLogout = (setUser) => (event) => {
   event.preventDefault();
@@ -17,20 +18,35 @@ const Blogs = ({ blogs, user, setUser, setBlogs }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const newBlog = { title, author, url };
-    const blog = await blogService.createBlog(newBlog);
-    blogs.push(blog);
-    setBlogs(blogs);
-    setTitle("");
-    setAuthor("");
-    setUrl("");
+    try {
+      const blog = await blogService.createBlog(newBlog);
+      blogs.push(blog);
+      setBlogs(blogs);
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      setMessage(`A new blog ${blog.title} added`);
+      setTimeout(() => setMessage(null), 5000);
+    } catch (exception) {
+      console.log(exception);
+      setMessage(`Something went wrong.`);
+      setError(true);
+      setTimeout(() => {
+        setMessage(null);
+        setError(false);
+      }, 5000);
+    }
   };
 
   return (
     <div>
+      <Notification message={message} error={error} />
       <h2>blogs</h2>
       <p>
         {user.name} is logged in.{" "}
