@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Blogs from "./components/Blogs";
 import blogService from "./services/blogService";
-import LoginForm from "./components/Login";
+import LoginForm from "./components/LoginForm";
 import loginService from "./services/loginService";
 import Notification from "./components/Notification";
 
@@ -75,4 +75,3 @@ const App = () => {
 };
 
 export default App;
-
