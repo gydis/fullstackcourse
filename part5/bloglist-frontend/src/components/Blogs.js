@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import blogService from "../services/blogService";
 import Notification from "./Notification";
+import Togglable from "./Togglable";
 
 const handleLogout = (setUser) => (event) => {
   event.preventDefault();
@@ -21,10 +22,13 @@ const Blogs = ({ blogs, user, setUser, setBlogs }) => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(false);
 
+  const blogFormRef = useRef();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const newBlog = { title, author, url };
     try {
+      await blogFormRef.current.toggleVisibility();
       const blog = await blogService.createBlog(newBlog);
       blogs.push(blog);
       setBlogs(blogs);
@@ -52,15 +56,17 @@ const Blogs = ({ blogs, user, setUser, setBlogs }) => {
         {user.name} is logged in.{" "}
         <button onClick={handleLogout(setUser)}>Logout</button>
       </p>
-      <BlogForm
-        title={title}
-        author={author}
-        url={url}
-        setTitle={handleField(setTitle)}
-        setAuthor={handleField(setAuthor)}
-        setUrl={handleField(setUrl)}
-        handleSubmit={handleSubmit}
-      />
+      <Togglable buttonLabel={"New blog"} ref={blogFormRef}>
+        <BlogForm
+          title={title}
+          author={author}
+          url={url}
+          setTitle={handleField(setTitle)}
+          setAuthor={handleField(setAuthor)}
+          setUrl={handleField(setUrl)}
+          handleSubmit={handleSubmit}
+        />
+      </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
