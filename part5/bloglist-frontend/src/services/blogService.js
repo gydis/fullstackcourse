@@ -21,4 +21,19 @@ const getAll = () => {
   return request.then((response) => response.data);
 };
 
-export default { getAll, setToken, createBlog };
+const likeBlog = async (blog) => {
+  const user = blog.user;
+  blog.user = blog.user.id;
+
+  const id = blog.id;
+  delete blog.id;
+  delete blog.__v;
+
+  blog.likes += 1;
+
+  const response = await axios.put(`${baseUrl}/${id}`, blog);
+  response.data.user = user;
+  return response.data;
+};
+
+export default { getAll, setToken, createBlog, likeBlog };

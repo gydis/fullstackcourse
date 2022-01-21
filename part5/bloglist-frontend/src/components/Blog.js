@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import blogService from "../services/blogService";
 const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
@@ -9,6 +10,7 @@ const Blog = ({ blog }) => {
   };
 
   const [hidden, setHidden] = useState(false);
+  const [blogState, setBlog] = useState(blog);
   const hideWhenVisible = { display: hidden ? "none" : "" };
   const showWhenVisible = { display: hidden ? "" : "none" };
 
@@ -19,23 +21,27 @@ const Blog = ({ blog }) => {
     setHidden(!hidden);
   };
 
+  const likeIncrement = async () => {
+    const newBlog = await blogService.likeBlog(blogState);
+    setBlog(newBlog);
+  };
+
   return (
     <div>
       <div style={hideBlogStyle}>
-        {blog.title} {blog.author}{" "}
+        {blogState.title} {blogState.author}{" "}
         <button onClick={toggleVisibility}>view</button>
       </div>
       <div style={showBlogStyle}>
-        {blog.title} {blog.author}{" "}
+        {blogState.title} {blogState.author}{" "}
         <button onClick={toggleVisibility}>hide</button> <br />
-        {blog.url} <br />
-        likes {blog.likes} <button>like</button>
+        {blogState.url} <br />
+        likes {blogState.likes} <button onClick={likeIncrement}>like</button>
         <br />
-        {blog.user.name} <br />
+        {blogState.user.name} <br />
       </div>
     </div>
   );
 };
 
 export default Blog;
-
