@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 const BlogForm = ({
   title,
@@ -27,6 +27,6 @@ const BlogForm = ({
       <button type="submit">create</button>
     </form>
   </div>
-);
+)
 
-export default BlogForm;
+export default BlogForm
