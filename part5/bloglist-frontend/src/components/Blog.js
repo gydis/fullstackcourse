@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import blogService from "../services/blogService";
-const Blog = ({ blog }) => {
+const Blog = ({ blog, removeBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -26,6 +26,13 @@ const Blog = ({ blog }) => {
     setBlog(newBlog);
   };
 
+  const removeButton = () => {
+    const cache = JSON.parse(window.localStorage.getItem("loggedUser"));
+    if (cache && blogState.user.username === cache.username) {
+      return <button onClick={removeBlog}>remove</button>;
+    }
+  };
+
   return (
     <div>
       <div style={hideBlogStyle}>
@@ -39,6 +46,7 @@ const Blog = ({ blog }) => {
         likes {blogState.likes} <button onClick={likeIncrement}>like</button>
         <br />
         {blogState.user.name} <br />
+        {removeButton()}
       </div>
     </div>
   );

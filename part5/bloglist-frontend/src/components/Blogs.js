@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Blog from "./Blog";
 import BlogForm from "./BlogForm";
 import blogService from "../services/blogService";
@@ -15,14 +15,26 @@ const handleField = (setState) => (event) => {
   setState(event.target.value);
 };
 
-const Blogs = ({ blogs, user, setUser, setBlogs }) => {
+const Blogs = ({ user, setUser }) => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(false);
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    blogService.getAll().then((blogs) => setBlogs(blogs));
+  }, []);
 
   const blogFormRef = useRef();
+  const genRemoveBlog = (blog) => async () => {
+    const result = window.confirm(`Remove blog ${blog.title}?`);
+    if (result) {
+      await blogService.removeBlog(blog);
+      setBlogs(blogs.filter((x) => (x.id === blog.id ? false : true)));
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -67,9 +79,11 @@ const Blogs = ({ blogs, user, setUser, setBlogs }) => {
           handleSubmit={handleSubmit}
         />
       </Togglable>
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
+      {blogs
+        .sort((a, b) => b.likes - a.likes)
+        .map((blog) => (
+          <Blog key={blog.id} blog={blog} removeBlog={genRemoveBlog(blog)} />
+        ))}
     </div>
   );
 };
