@@ -35,15 +35,18 @@ const Blog = ({ blog, removeBlog }) => {
 
   return (
     <div>
-      <div style={hideBlogStyle}>
+      <div style={hideBlogStyle} className="defaultBlog">
         {blogState.title} {blogState.author}{' '}
         <button onClick={toggleVisibility}>view</button>
       </div>
-      <div style={showBlogStyle}>
+      <div style={showBlogStyle} className="showMoreBlog">
         {blogState.title} {blogState.author}{' '}
         <button onClick={toggleVisibility}>hide</button> <br />
         {blogState.url} <br />
-        likes {blogState.likes} <button onClick={likeIncrement}>like</button>
+        likes {blogState.likes}{' '}
+        <button id="blogLikeButton" onClick={likeIncrement}>
+          like
+        </button>
         <br />
         {blogState.user.name} <br />
         {removeButton()}
